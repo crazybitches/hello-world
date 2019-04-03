@@ -1,0 +1,285 @@
+from tkinter import *
+import tkinter.messagebox
+from tkinter import ttk
+import random
+import time
+import datetime
+import backend_database
+
+def main():
+    root = Tk ()
+    app = window1 ( root )
+    root.mainloop ()
+
+
+class window1:
+    def __init__(self, master):
+        self.master = master
+        self.master.title ( " On Trial" )
+        self.master.geometry ( "1350x750+0+0" )
+        self.master.config ( bg='cadet blue' )
+        self.frame = Frame ( self.master, bg='cadet blue' )
+        self.frame.pack ()
+
+        self.username = StringVar ()
+        self.password = StringVar ()
+
+        self.lbltitle = Label ( self.frame, text="On Trial", font=('arial', 50, 'bold'), bg='cadet blue',
+                                fg='black' )
+        self.lbltitle.grid ( row=0, column=0, columnspan=2, pady=40 )
+
+        self.loginframe1 = LabelFrame ( self.frame, width=1350, font=('arial', 20, 'bold'), height=600, relief='ridge',
+                                   bg = 'cadet blue' , bd = 20 )
+        self.loginframe1.grid ( row=1, column=0 )
+
+        self.loginframe2 = LabelFrame ( self.frame, width=1000, height=600, font=('arial', 20, 'bold'), relief='ridge',
+                                   bg='cadet blue', bd=20 )
+        self.loginframe2.grid ( row=2, column=0 )
+
+
+        self.lblusename = Label(self.loginframe1,text = "username",font=('arial',20,'bold'))
+        self.lblusename.grid(row=0,column=0)
+        self.txtusername=Entry(self.loginframe1,font=('arial',20,'bold'),show="", textvariable = self.username)
+        self.txtusername.grid(row=0,column=1)
+
+        self.lblpassword = Label ( self.loginframe1, text="password", font=('arial', 20, 'bold') )
+        self.lblpassword.grid ( row=1, column=0 )
+        self.txtpassword = Entry ( self.loginframe1, font=('arial', 20, 'bold'), show ="*", textvariable = self.password )
+        self.txtpassword.grid ( row=1, column=1 )
+
+
+
+
+        self.btnlogin = Button ( self.loginframe2, text="Login", width=17, command=self.login_system)
+        self.btnlogin.grid ( row=3, column=0 )
+
+        self.btnreset = Button ( self.loginframe2, text="Reset", width=17, command=self.rest)
+        self.btnreset.grid ( row=3, column=1 )
+
+        self.btnexit = Button ( self.loginframe2, text="Exit", width=17,command= self.iexit)
+        self.btnexit.grid ( row=3, column=2 )
+
+
+    def login_system(self):
+        u=(self.username.get())
+        p=(self.password.get())
+
+        if (u==str(123) and p==str(123)):
+            self.new_window= Toplevel(self.master)
+            self.app    = supplier(self.new_window)
+        else:
+            tkinter.messagebox.askyesno("STUPID BITCH","WRONG PASSWORD BITCH!!!")
+            self.username.set("")
+            self.password.set("")
+            self.txtusername.focus()
+
+    def rest(self):
+        self.username.set("")
+        self.password.set("")
+        self.txtusername.focus()
+
+    def iexit(self):
+        self.iexit = tkinter.messagebox.askyesno("Login System", "WANT TO FUCK OFF?")
+        if self.iexit>0:
+            self.master.destroy()
+        else:
+            command = self.supplier
+            return
+
+
+
+    def supplier(self):
+        self.supplier = Toplevel ( self.supplier )
+        self.app = supplier ( self.supplier )
+
+
+
+
+
+class supplier:
+    # noinspection PyCompatibility
+    def __init__(self, root):
+        self.root = root
+        self.root.title ( " On Trial" )
+        self.root.geometry ( "1350x750+0+0" )
+        self.root.config ( bg='cadet blue' )
+
+        SpdID = StringVar ()  # supplier ID
+        Firstname = StringVar ()
+        Date = StringVar ()
+        Address = StringVar ()
+        Mobile = StringVar ()
+        Details = StringVar ()
+
+        def iexit():
+            iexit = tkinter.messagebox.askyesno ( " Trial Database ", "Do you want exit" )
+            if iexit > 0:
+                root.destroy ()
+                return
+
+        def cleardata():
+            self.txtSpdID.delete ( '0', END )
+            self.txtfna.delete ( '0', END )
+            self.txtdate.delete ( '0', END )
+            self.txtaddress.delete ( '0', END )
+            self.txtmobile.delete ( '0', END )
+            self.txtdetails.delete ( '0', END )
+
+        def adddata():
+            if(len(SpdID.get())!=0):
+                backend_database.adddata(SpdID.get(),Firstname.get(),Date.get(), Address.get(),Mobile.get(),Details.get())
+                supplierlist.delete(0,END)
+                supplierlist.insert(END,(SpdID.get(),Firstname.get(),Date.get(),Address.get(),Mobile.get(),Details.get()))
+
+
+
+        def displaydata():
+            supplierlist.delete ( 0, END )
+            for row in backend_database.viewdata ():
+                supplierlist.insert (END, row, str (" "))
+
+        def supplierRec(event):
+            global sd
+            searchSpd = supplierlist.curselection ()[0]
+            sd = supplierlist.get ( searchSpd )
+
+            self.txtSpdID.delete ( 0, END )
+            self.txtSpdID.insert ( END, sd[1] )
+
+            self.txtfna.delete ( 0, END )
+            self.txtfna.insert ( END, sd[2] )
+
+            self.txtdate.delete ( 0, END )
+            self.txtdate.insert ( END, sd[3] )
+
+            self.txtaddress.delete ( 0, END )
+            self.txtaddress.insert ( END, sd[4] )
+
+            self.txtmobile.delete ( 0, END )
+            self.txtmobile.insert ( END, sd[5] )
+
+            self.txtdetails.delete ( 0, END )
+            self.txtdetails.insert ( END, sd[6] )
+
+        def deletedata():
+            if (len ( SpdID.get () ) != 0):
+                backend_database.delete(sd[0])
+                cleardata()
+                displaydata()
+
+        def searchdata():
+            supplierlist.delete ( 0, END )
+            for row in backend_database.search ( SpdID.get (), Firstname.get (), Date.get (), Address.get (),
+                                                     Mobile.get (), Details.get () ):
+                supplierlist.insert(END,row,str(""))
+
+        def update():
+            if (len ( SpdID.get () ) != 0):
+                backend_database.delete( sd[0] )
+            if (len ( SpdID.get () ) != 0):
+                backend_database.adddata ( SpdID.get (), Firstname.get (), Date.get (), Address.get (), \
+                                             Mobile.get (), Details.get () )
+                supplierlist.delete ( 0, END )
+                supplierlist.insert ( END, (SpdID.get (), Firstname.get (), Date.get (), Address.get (), \
+                                            Mobile.get (), Details.get ()) )
+
+
+        Mainframe = Frame ( self.root, bg='cadet blue' )
+        Mainframe.grid ()
+
+        Titframe = Frame ( Mainframe, bd=2, padx=54, pady=8, bg="ghost white", relief=RIDGE )
+        Titframe.pack ( side=TOP )
+
+        lblTit = Label ( Titframe, font=('arial', 47, 'bold'), text="Supplier Database System", bg="ghost white" )
+        lblTit.grid ()
+
+        ButtonFrame = Frame ( Mainframe, bd=2, width=1350, height=70, padx=18, pady=10, bg="ghost white", relief=RIDGE )
+        ButtonFrame.pack ( side=BOTTOM )
+
+        Dataframe = Frame ( Mainframe, bd=1, width=1300, height=400, padx=20, pady=20, relief=RIDGE, bg='cadet blue' )
+        Dataframe.pack ( side=BOTTOM )
+
+        Dataframeleft = LabelFrame ( Dataframe, bd=1, width=1000, height=600, padx=20, relief=RIDGE, bg="ghost white",
+                                     font=('arial', 20, 'bold'), text="Supplier Info\n" )
+        Dataframeleft.pack ( side=LEFT )
+
+        Dataframeright = LabelFrame ( Dataframe, bd=1, width=450, height=300, padx=31, pady=3, relief=RIDGE,
+                                      bg="ghost white",
+                                      font=('arial', 20, 'bold'), text="Supplier Details\n" )
+        Dataframeright.pack ( side=RIGHT )
+
+        self.lblSplID = Label ( Dataframeleft, font=('arial', 20, 'bold'), text="Supplier ID :", padx=2, pady=2,
+                           bg="ghost white" )
+        self.lblSplID.grid ( row=0, column=0, sticky=W )
+        self.txtSpdID = Entry ( Dataframeleft, font=('arial', 20, 'bold'), textvariable=SpdID, width=39 )
+        self.txtSpdID.grid ( row=0, column=1 )
+
+        lblfna = Label ( Dataframeleft, font=('arial', 20, 'bold'), text="Supplier Name :", padx=2, pady=2,
+                         bg="ghost white" )
+        lblfna.grid ( row=1, column=0, sticky=W )
+        self.txtfna = Entry ( Dataframeleft, font=('arial', 20, 'bold'), textvariable=Firstname, width=39 )
+        self.txtfna.grid ( row=1, column=1 )
+
+        self.lbldate = Label ( Dataframeleft, font=('arial', 20, 'bold'), text="Date :", padx=2, pady=2,
+                               bg="ghost white" )
+        self.lbldate.grid ( row=2, column=0, sticky=W )
+        self.txtdate = Entry ( Dataframeleft, font=('arial', 20, 'bold'), textvariable=Date, width=39 )
+        self.txtdate.grid ( row=2, column=1 )
+
+        self.lbladdress = Label ( Dataframeleft, font=('arial', 20, 'bold'), text="Address :", padx=2, pady=2,
+                                  bg="ghost white" )
+        self.lbladdress.grid ( row=3, column=0, sticky=W )
+        self.txtaddress = Entry ( Dataframeleft, font=('arial', 20, 'bold'), textvariable=Address, width=39 )
+        self.txtaddress.grid ( row=3, column=1 )
+
+        self.lblmobile = Label ( Dataframeleft, font=('arial', 20, 'bold'), text="Phone Number :", padx=2, pady=2,
+                                 bg="ghost white" )
+        self.lblmobile.grid ( row=4, column=0, sticky=W )
+        self.txtmobile = Entry ( Dataframeleft, font=('arial', 20, 'bold'), textvariable=Mobile, width=39 )
+        self.txtmobile.grid ( row=4, column=1 )
+
+        self.lbldetails = Label ( Dataframeleft, font=('arial', 20, 'bold'), text="Details :", padx=2, pady=2,
+                                  bg="ghost white" )
+        self.lbldetails.grid ( row=5, column=0, sticky=W )
+        self.txtdetails = Entry ( Dataframeleft, font=('arial', 20, 'bold'), textvariable=Details, width=39 )
+        self.txtdetails.grid ( row=5, column=1 )
+
+        scrollbar = Scrollbar ( Dataframeright )
+        scrollbar.grid ( row=0, column=1, sticky='ns' )
+
+        supplierlist = Listbox ( Dataframeright, width=41, height=16, font=('arial', 12, 'bold'),
+                                 yscrollcommand=scrollbar.set )
+        supplierlist.bind ( '<<ListboxSelect>>', supplierRec )
+        supplierlist.grid ( row=0, column=0, padx=8 )
+        scrollbar.config ( command=supplierlist.yview )
+
+        self.btnAddDate = Button ( ButtonFrame, text=" Add New ", command= adddata,font=('arial', 20, 'bold'), height=1, width=10, bd=4)
+        self.btnAddDate.grid ( row=0, column=0 )
+
+        self.btnDisplayData = Button ( ButtonFrame, text=" Display ", font=('arial', 20, 'bold'), height=1, width=10,
+                                       bd=4, command=displaydata )
+        self.btnDisplayData.grid ( row=0, column=1 )
+
+        self.btnClearData = Button ( ButtonFrame, text=" Clear ", font=('arial', 20, 'bold'), height=1, width=10, bd=4,
+                                     command=cleardata )
+        self.btnClearData.grid ( row=0, column=2 )
+
+        self.btnSearchData = Button ( ButtonFrame, text=" Search ", font=('arial', 20, 'bold'), height=1, width=10,
+                                      bd=4, command=searchdata )
+        self.btnSearchData.grid ( row=0, column=3 )
+
+        self.btnDelete = Button ( ButtonFrame, text=" Delete ", font=('arial', 20, 'bold'), height=1, width=10, bd=4,
+                                  command=deletedata )
+        self.btnDelete.grid ( row=0, column=4 )
+
+        self.btnUpdate = Button ( ButtonFrame, text=" Update ", font=('arial', 20, 'bold'), height=1, width=10, bd=4,
+                                  command=update )
+        self.btnUpdate.grid ( row=0, column=5 )
+
+        self.btnExit = Button ( ButtonFrame, text=" Exit ", font=('arial', 20, 'bold'), height=1, width=10, bd=4,
+                                command=iexit )
+        self.btnExit.grid ( row=0, column=6 )
+
+
+if __name__ == '__main__':
+    main ()
