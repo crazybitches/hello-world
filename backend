@@ -1,0 +1,59 @@
+import sqlite3
+from sqlite3.dbapi2 import Cursor
+
+
+def supplier():
+    con = sqlite3.connect("supplier.db")
+    cur = con.cursor()
+    cur.execute("""
+        CREATE TABLE IF NOT EXISTS supplier (id INTEGER PRIMARY KEY, SpdID text, Firstname text, Date text, Address text, Mobile text, \
+        Details text)
+    
+    """)
+    con.commit()
+    con.close()
+
+def adddata(SpdID, Firstname, Date, Address, Mobile, Details):
+    con = sqlite3.connect("supplier.db")
+    cur: Cursor=con.cursor()
+    cur.execute("INSERT INTO supplier VALUES(NULL,?,?,?,?,?,?)", (SpdID,Firstname,Date,Address,Mobile,Details))
+    con.commit()
+    con.close()
+
+def viewdata():
+    con=sqlite3.connect("supplier.db")
+    cur=con.cursor()
+    cur.execute("SELECT * FROM supplier")
+    rows=cur.fetchall()
+    con.close()
+    return rows
+
+def delete(id):
+    con=sqlite3.connect("supplier.db")
+    cur=con.cursor()
+    cur.execute("DELETE FROM supplier WHERE id=?",(id,))
+    con.commit()
+    con.close()
+
+def search(SpdID="", Firstname="", Date="",Address="",Mobile="",Details=""):
+    con=sqlite3.connect("supplier.db")
+    cur=con.cursor()
+    cur.execute("SELECT * FROM supplier WHERE SpdID=? OR Firstname=? OR Date=? OR Address=? OR \
+    Mobile=? OR Details=?", (SpdID, Firstname,Date,Address, Mobile, Details))
+    rows=cur.fetchall()
+    con.close()
+    return rows
+
+def update(id, SpdID="", Firstname="", Date="", Address="", Mobile="", Details=""):
+    con=sqlite3.connect("supplier.db")
+    cur=con.cursor()
+    cur.execute("UPDATE supplier SET SpdID=?, Firstname=?, Date=?, Address=?, Mobile=?,Details=? WHERE id=?",\
+                (SpdID,Firstname,Date,Address,Mobile,Details, id))
+    con.commit()
+    con.close()
+
+
+
+
+
+supplier()
