@@ -64,7 +64,7 @@ class window1:
         u=(self.username.get())
         p=(self.password.get())
 
-        if (u==str(123) and p==str(123)):
+        if (u==Strvar(123)):
             self.new_window= Toplevel(self.master)
             self.app    = supplier(self.new_window)
         else:
@@ -104,12 +104,12 @@ class supplier:
         self.root.geometry ( "1350x750+0+0" )
         self.root.config ( bg='cadet blue' )
 
-        SpdID = StringVar ()  # supplier ID
-        Firstname = StringVar ()
-        Date = StringVar ()
-        Address = StringVar ()
-        Mobile = StringVar ()
-        Details = StringVar ()
+        SpdID = StringVar   # supplier ID
+        Firstname = StringVar 
+        Date = StringVar 
+        Address = StringVar 
+        Mobile = StringVar 
+        Details = StringVar 
 
         def iexit():
             iexit = tkinter.messagebox.askyesno ( " Trial Database ", "Do you want exit" )
