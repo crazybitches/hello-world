@@ -1,0 +1,15 @@
+target = 66
+while True:
+    value = input("enter an integer between 1 and 100:")
+    try:
+        value= int(value)
+        break
+    except ValueError:
+        print("i said enter an integer!!")
+
+if value > target:
+        print(value, "is too high")
+elif int(value) < target :
+        print("too low")
+else:
+        print("perfect")
